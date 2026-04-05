@@ -453,280 +453,171 @@ class DepartmentControllerTest {
     }
 }
 
-🚀 Como Usar Seu Copiloto (Este Repositório)
-1. Começar a Estudar um Novo Tema
+# 🤖 Guia de Uso - Seu Copiloto de Código
+
+## 📌 Introdução
+
+Este guia documenta como usar seu **copiloto de código personalizado** para aprender e desenvolver durante o **Bootcamp Backend Java Spring da DIO**. 
+
+O copiloto foi calibrado especificamente para:
+- Seguir 100% seu padrão de código
+- Respeitar sua curva de aprendizado
+- Nunca fazer mudanças não solicitadas
+- Aprender novos temas junto com você
+
+---
+
+## 🚀 Como Usar Seu Copiloto
+
+### **1️⃣ Começar a Estudar um Novo Tema**
+
 Quando você quiser aprender sobre um novo conceito, framework ou padrão:
 
-Code
-Ei, vou começar a estudar sobre [TEMA].
-Posso contar com você para me ajudar?
-Exemplo:
+**Formato:**
 
-Code
-Vou começar a estudar sobre Autenticação e Autorização com Spring Security.
-Posso contar com você para me ajudar?
-O copiloto vai:
+Ei, vou começar a estudar sobre [TEMA]. Posso contar com você para me ajudar?
 
-✅ Aprender o novo tema junto com você
-✅ Criar exemplos usando SEU padrão de código
-✅ Nunca adicionar features que você não pediu
-✅ Explicar conceitos e melhores práticas
-2. Pedir Implementação de Código
-Quando você quiser implementar uma feature:
 
-Code
+**Exemplo prático:**
+
+Vou começar a estudar sobre Autenticação e Autorização com Spring Security. Posso contar com você para me ajudar?
+
+
+**O copiloto vai:**
+- ✅ Aprender o novo tema junto com você
+- ✅ Criar exemplos usando SEU padrão de código
+- ✅ Nunca adicionar features que você não pediu
+- ✅ Explicar conceitos e melhores práticas
+- ✅ Responder dúvidas conforme você avança
+
+---
+
+### **2️⃣ Pedir Implementação de Código**
+
+Quando você quiser implementar uma feature ou criar novos endpoints:
+
+**Formato:**
+
 Crie um endpoint [DESCRIÇÃO] que [FUNCIONALIDADE]
-Exemplo:
 
-Code
+
+**Exemplo prático:**
+
 Crie um endpoint POST /users que registra um novo usuário com email validado
-O copiloto vai:
 
-✅ Seguir 100% seu padrão de código
-✅ Criar Controller + Service + Repository + DTO + Tests
-✅ Implementar validações e exception handling
-✅ Explicar cada passo
-3. Pedir Revisão ou Refatoração
-Code
+
+**O copiloto vai:**
+- ✅ Seguir 100% seu padrão de código
+- ✅ Criar Controller + Service + Repository + DTO + Tests
+- ✅ Implementar validações e exception handling
+- ✅ Usar a mesma estrutura que você usa no SchoolAPI
+- ✅ Explicar cada passo implementado
+
+**Exemplo de resposta:**
+```java
+// Controller
+@RestController
+@RequestMapping("/users")
+public class UserController {
+    @PostMapping
+    public ResponseEntity<Object> createUser(@RequestBody UserDto dto) {
+        // ... segue seu padrão
+    }
+}
+
+// Service
+@Service
+public class UserService {
+    @Transactional
+    public void create(UserDto dto) {
+        // ... lógica de negócio
+    }
+}
+
+// Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
+}
+
+// DTO (Record)
+public record UserDto(Long id, String name, String email) {
+    public User toEntity() { /* ... */ }
+}
+
+// Tests
+@WebMvcTest(UserController.class)
+class UserControllerTest {
+    // ... testes completos
+}
+
+### **3️⃣ Pedir Revisão ou Refatoração**
+Quando você quer que seu código seja revisado:
+
+Formato:
+
 Por favor, revise este código: [CÓDIGO]
 Ele segue as boas práticas? O que poderia melhorar?
-4. Questionar sobre Conceitos
-Code
+
+Exemplo prático:
+
+Por favor, revise este código:
+
+@PostMapping
+public ResponseEntity<?> create(@RequestBody DepartmentDto dto) {
+    try {
+        Department dept = dto.toEntity();
+        departmentService.create(dto);
+        return ResponseEntity.ok("Criado com sucesso");
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Erro: " + e);
+    }
+}
+
+Ele segue as boas práticas?
+
+O copiloto vai:
+
+✅ Identificar pontos de melhoria
+✅ Sugerir refatorações mantendo seu estilo
+✅ Explicar por que mudar
+✅ Fornecer código refatorado pronto
+
+## **4️⃣ Questionar sobre Conceitos**
+Quando você quer entender melhor um conceito:
+
+Formato:
+
 Explique como funciona [CONCEITO] e como aplicar isso em [SITUAÇÃO]
+
+Exemplo prático:
+
+Explique como funciona a anotação @Transactional e como aplicar isso em um Service que salva múltiplos registros
+
+O copiloto vai:
+
+✅ Explicar o conceito de forma clara
+✅ Fornecer exemplos práticos
+✅ Mostrar casos de uso
+✅ Ensinar boas práticas
+
 📖 Convenções do Copiloto
 Nunca será feito sem você pedir:
+
 ❌ Mudanças em arquivos do projeto
 ❌ Adição de novas dependências
 ❌ Refatorações ou melhorias não solicitadas
 ❌ Alteração de padrões estabelecidos
+❌ Modificações no banco de dados
+❌ Adicionar novos testes além do solicitado
+
 Sempre será feito:
+
 ✅ Seguir seu padrão de código EXATAMENTE
 ✅ Respeitar sua curva de aprendizado
 ✅ Documentar e explicar decisões
 ✅ Sugerir boas práticas quando apropriado
 ✅ Criar testes junto com o código
 ✅ Manter consistência com seu estilo
-🎯 Referência Rápida: Seu Padrão
-Aspecto	Padrão	Exemplo
-URL Base	/resource-name	/departments, /teachers
-POST	Criar novo	POST /departments → 201 Created
-PUT	Atualizar	PUT /departments/{id} → 204 No Content
-DELETE	Deletar	DELETE /departments/{id} → 204 No Content
-GET by ID	Buscar um	GET /departments/{id} → 200 OK com DTO
-GET All	Listar todos	GET /departments → 200 OK com List
-GET Query	Busca param	GET /departments/name?name=... → 200 OK
-Exception	Centralizado	@RestControllerAdvice com StandardError
-DTO	Sempre	Nunca expor entidades diretamente
-Service	@Transactional	Lógica isolada, com validações
-Tests	MockMvc	@WebMvcTest com Mockito
-HTTP Status	Apropriado	201 Created, 204 No Content, 404 Not Found, 409 Conflict
-📊 Estrutura do Projeto Típico
-Code
-src/main/java/
-├── controller/
-│   ├── DepartmentController.java
-│   ├── TeacherController.java
-│   ├── StudentController.java
-│   └── ...
-├── service/
-│   ├── DepartmentService.java
-│   ├── TeacherService.java
-│   ├── StudentService.java
-│   └── ...
-├── repository/
-│   ├── DepartmentRepository.java
-│   ├── TeacherRepository.java
-│   ├── StudentRepository.java
-│   └── ...
-├── entity/
-│   ├── Department.java
-│   ├── Teacher.java
-│   ├── Student.java
-│   └── ...
-├── dto/
-│   ├── DepartmentDto.java
-│   ├── TeacherDto.java
-│   ├── StudentDto.java
-│   └── ...
-└── exception/
-    ├── ResourceExceptionHandler.java
-    ├── ResourceAlreadyExistsException.java
-    ├── StandardError.java
-    └── ...
+✅ Avisar sobre possíveis problemas
 
-src/test/java/
-└── tests/controller/
-    ├── DepartmentControllerTest.java
-    ├── TeacherControllerTest.java
-    ├── StudentControllerTest.java
-    └── ...
 
-resources/
-├── application.properties (ou application.yml)
-└── templates/ (se necessário)
-
-pom.xml
-docker-compose.yml
-README.md
-.gitignore
-📋 Dependências Maven Padrão
-XML
-<dependencies>
-    <!-- Spring Boot Web -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-webmvc</artifactId>
-    </dependency>
-
-    <!-- Spring Data JPA -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-
-    <!-- Bean Validation -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-validation</artifactId>
-    </dependency>
-
-    <!-- PostgreSQL Driver -->
-    <dependency>
-        <groupId>org.postgresql</groupId>
-        <artifactId>postgresql</artifactId>
-        <scope>runtime</scope>
-    </dependency>
-
-    <!-- Lombok -->
-    <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <optional>true</optional>
-    </dependency>
-
-    <!-- Swagger/OpenAPI -->
-    <dependency>
-        <groupId>org.springdoc</groupId>
-        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-        <version>3.0.2</version>
-    </dependency>
-
-    <!-- Dev Tools -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-devtools</artifactId>
-        <scope>runtime</scope>
-        <optional>true</optional>
-    </dependency>
-
-    <!-- Testing -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
-🐳 Docker Compose Padrão
-YAML
-version: '3.8'
-
-services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: postgres_db
-    environment:
-      POSTGRES_DB: schoolapi_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5431:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app_network
-
-volumes:
-  postgres_data:
-
-networks:
-  app_network:
-    driver: bridge
-⚙️ Application Properties Padrão
-properties
-# Server
-server.port=8080
-server.servlet.context-path=/api
-
-# Database
-spring.datasource.url=jdbc:postgresql://localhost:5431/schoolapi_db
-spring.datasource.username=postgres
-spring.datasource.password=postgres
-spring.datasource.driver-class-name=org.postgresql.Driver
-
-# JPA/Hibernate
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL10Dialect
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=false
-spring.jpa.properties.hibernate.format_sql=true
-
-# Logging
-logging.level.root=INFO
-logging.level.org.springframework.web=DEBUG
-logging.level.org.hibernate.SQL=DEBUG
-
-# Swagger
-springdoc.swagger-ui.path=/swagger-ui.html
-springdoc.api-docs.path=/v3/api-docs
-📝 Sobre Você
-Rodrigo
-
-🎓 Estudante de Sistemas de Informação (3º Período)
-🧬 Graduado em Ciências Biológicas com Pós-graduação em Neurociência
-🎯 Foco em Backend (Java/Spring) e DevOps
-📜 Certificado Java (Basic) e em preparação para Azure Fundamentals (AZ-900)
-🚀 Participando do Bootcamp Backend Java Spring - DIO
-🔗 Referências Úteis
-Spring Boot Documentation
-Spring Data JPA Guide
-REST API Best Practices
-SOLID Principles
-JWT Authentication
-Docker for Developers
-PostgreSQL Documentation
-Maven Guide
-JUnit 5 Documentation
-Mockito Documentation
-📌 Próximas Etapas
-✅ Copiloto calibrado e pronto
-📚 Começar os módulos do bootcamp
-🏗️ Implementar projetos práticos
-🧪 Aprender novos padrões e frameworks
-🚀 Deployar na nuvem (Azure)
-Estou pronto para aprender junto com você! 🚀
-
-Quando quiser estudar um novo tema ou implementar uma feature, é só chamar!
-
-📌 Resumo de Como Usar
-Para começar a estudar algo novo:
-
-Code
-Vou começar a estudar sobre [TEMA]. Posso contar com você?
-Para pedir uma feature:
-
-Code
-Crie um endpoint [DESCRIÇÃO] que [FUNCIONALIDADE]
-Para questionar conceitos:
-
-Code
-Explique como funciona [CONCEITO]
-Para revisar código:
-
-Code
-Revise este código: [CÓDIGO]. Segue as boas práticas?
-Última atualização: 05 de abril de 2026 ✨
-
-Code
-
-Pronto! 📄 Arquivo único `.md` completo com tudo que você precisava. Você pode copiar isso e criar um novo repositório no GitHub para o bootcamp da DIO. 
-
-Quer que eu faça ajustes em algo? 🎯
