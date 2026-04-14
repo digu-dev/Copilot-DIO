@@ -752,7 +752,7 @@ MG-Root
 environment = prod/dev
 department  = Financeiro/Marketing
 project     = LojaOnline/CoreBanking
-```
+
   → Filtra custo por Tag e vê quem está gastando quanto
 
 - **Azure Policy:**
@@ -821,13 +821,17 @@ project     = LojaOnline/CoreBanking
 > Metadados em forma de chave-valor anexados a recursos, RGs ou Subscriptions.
 
 **Exemplos:**
-```
 environment = production
 department  = financeiro
 project     = ecommerce
 costCenter  = CC123
 owner       = joao.silva
 ```
+
+```
+
+
+
 **Para que servem:**
 - Organização
 - Governança (Policy pode exigir Tags)
@@ -894,6 +898,7 @@ owner       = joao.silva
 ### Resumão Rápido — Governança e Custos
 
 ```
+```
 Hierarquia:
   Tenant → Management Group (nested ✅) → Subscription → Resource Group → Resource
 
@@ -921,7 +926,7 @@ Resource Health:
 Azure Monitor:
   Métricas + Logs + Alertas + Application Insights + Log Analytics
 ```
-
+```
 ---
 
 ## 15. Conceitos Básicos de Cloud Computing
@@ -1142,6 +1147,8 @@ Você escolhe: serviços, região, quantidade, horas/mês → ela estima o custo
 ## 19. Pegadinhas Comuns
 
 ```
+
+```
 1. App Service ≠ Serverless
    App Service = você gerencia plano/capacidade
    Functions = Azure gerencia tudo
@@ -1235,7 +1242,7 @@ Você escolhe: serviços, região, quantidade, horas/mês → ela estima o custo
 99,99%  → Availability Zone, RA-GRS, Load Balancer Standard, SQL Database, Cosmos DB
 99,999% → Cosmos DB Multi-Region Writes
 ```
-
+```
 ---
 
 ## 📝 Checklist Final
