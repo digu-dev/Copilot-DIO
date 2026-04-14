@@ -18,7 +18,9 @@
 10. [Azure Functions e Logic Apps](#10-azure-functions-e-logic-apps)
 11. [Redes no Azure](#11-redes-no-azure)
 12. [Segurança e Identidade](#12-segurança-e-identidade)
-13. [Pegadinhas Comuns](#13-pegadinhas-comuns)
+13. [Modelos de Serviço: IaaS, PaaS, SaaS e Serverless](#13-modelos-de-serviço-iaas-paas-saas-e-serverless)
+14. [Hierarquia de Governança e Custos](#14-hierarquia-de-governança-e-custos)
+15. [Pegadinhas Comuns](#15-pegadinhas-comuns)
 
 ---
 
@@ -132,7 +134,7 @@ INTERNET
 
 ### WAF - Ataques Bloqueados
 
-- �� SQL Injection
+- ✅ SQL Injection
 - ✅ XSS (Cross-Site Scripting)
 - ✅ Command Injection
 - ✅ Path Traversal
@@ -488,7 +490,466 @@ Condições válidas em Conditional Access:
 
 ---
 
-## 13. Pegadinhas Comuns
+## 13. Modelos de Serviço: IaaS, PaaS, SaaS e Serverless
+
+### 1️⃣ IaaS – Infrastructure as a Service
+
+> **Ideia:** Azure entrega infraestrutura virtual (servidores, rede, disco). Você é responsável pelo SO para cima.
+
+| Você gerencia | Azure gerencia |
+|---------------|----------------|
+| Sistema operacional (Windows/Linux) | Datacenter físico |
+| Patches, antivirus, firewall do SO | Hosts/hypervisor |
+| Runtime (.NET, Java, Node, etc.) | Rede física, energia, refrigeração |
+| Aplicação e dados | — |
+
+#### Exemplos de IaaS no Azure
+
+| Serviço | Descrição |
+|---------|-----------|
+| Azure Virtual Machines (VMs) | Servidor virtual Windows/Linux |
+| Azure Virtual Machine Scale Sets (VMSS) | Grupo de VMs com autoscale |
+| Azure Managed Disks | Discos para VMs |
+| Azure Virtual Network (VNet) | Rede privada |
+| Azure Load Balancer (Basic/Standard) | Balanceamento L4 para VMs |
+| Azure VPN Gateway | Túnel VPN site-to-site/point-to-site |
+| Azure Dedicated Host | Host físico dedicado para suas VMs |
+
+#### Quando usar IaaS
+- Migrar servidor on-prem "como está" para nuvem (lift and shift)
+- Software legado que precisa de acesso ao SO/Registry/driver
+- Controle fino de sistema e middleware
+
+---
+
+### 2️⃣ PaaS – Platform as a Service
+
+> **Ideia:** Azure entrega uma plataforma gerenciada (runtime, SO, patches). Você foca em código e dados, não em SO.
+
+| Você gerencia | Azure gerencia |
+|---------------|----------------|
+| Código/aplicação | Sistema operacional |
+| Configuração da app (conn strings, settings) | Runtime da linguagem |
+| Dados e schema | Patching, disponibilidade da plataforma |
+| — | Escalabilidade da plataforma (dentro de limites de plano) |
+
+#### Exemplos de PaaS no Azure
+
+| Serviço | Descrição |
+|---------|-----------|
+| Azure App Service (Web Apps, API Apps) | Hospedar sites e APIs |
+| Azure SQL Database | SQL Server gerenciado como serviço |
+| Azure Cosmos DB (mode provisionado) | NoSQL multi-modelo |
+| Azure Synapse Analytics (SQL pool) | Data warehouse gerenciado |
+| Azure Service Bus | Filas e tópicos enterprise |
+| Azure Event Hubs | Ingestão de eventos em grande volume |
+| Azure Container Apps | PaaS serverless para containers/microserviços |
+| Azure Kubernetes Service (AKS) | Orquestração de containers gerenciada |
+| Azure API Management | Gateway/gerenciador de APIs |
+| Azure Key Vault | Config/segredos gerenciados |
+
+#### Quando usar PaaS
+- App web/API moderna (HTTP/HTTPS) sem dependência de SO específico
+- Reduzir esforço de operação (não quer patch de sistema)
+- Ganhar rapidez em desenvolvimento e deploy
+
+---
+
+### 3️⃣ SaaS – Software as a Service
+
+> **Ideia:** Azure/Microsoft entrega o aplicativo pronto. Você só usa; não gerencia infra, SO, nem código.
+
+| Você gerencia | Azure/Microsoft gerencia |
+|---------------|--------------------------|
+| Usuários, licenças | Toda a aplicação (código) |
+| Configurações de uso (políticas, templates) | Plataforma, SO, infra, segurança da aplicação |
+| Dados que coloca no serviço | — |
+
+#### Exemplos de SaaS da Microsoft
+
+| Serviço | Descrição |
+|---------|-----------|
+| Microsoft 365 | Exchange Online, SharePoint Online, OneDrive, Teams |
+| Dynamics 365 | CRM/ERP SaaS da Microsoft |
+| Power BI (serviço) | BI na nuvem |
+| Azure DevOps Services | Hospedado como serviço |
+| GitHub | SaaS puro (ecossistema Microsoft) |
+
+> 💡 **Dica AZ-900:** "Modelo em que você só consome a aplicação, sem gerenciar nada de infraestrutura" → **SaaS**
+
+---
+
+### 4️⃣ Serverless – Modelo de Execução (PaaS 2.0)
+
+> **Importante:** Serverless não é uma "quarta categoria" oficial como IaaS/PaaS/SaaS — é um **estilo de execução** dentro de PaaS com características especiais.
+
+#### Características de Serverless
+
+```
+✅ Você não provisiona nem gerencia servidores/VMs/plano
+✅ Escala automática (inclui scale-to-zero)
+✅ Cobra por uso/execução, não por capacidade parada
+✅ Fortemente event-driven (executa em resposta a eventos)
+```
+
+#### Exemplos de Serverless no Azure
+
+**a) Compute / Código**
+
+| Serviço | Descrição |
+|---------|-----------|
+| Azure Functions | Funções disparadas por HTTP, Timer, Blob, Queue, Event Grid, Service Bus, Cosmos DB. Plano Consumption: escala automático, paga por execução/GB-segundo |
+
+**b) Workflow / Integração**
+
+| Serviço | Descrição |
+|---------|-----------|
+| Azure Logic Apps | Workflows visuais com conectores (Office 365, SAP, Dynamics, ServiceNow, etc.). Paga por ação/execução |
+
+**c) Containers Serverless**
+
+| Serviço | Descrição |
+|---------|-----------|
+| Azure Container Instances (ACI) | Executa containers sob demanda, paga por segundo. Sem cluster, sem VM |
+| Azure Container Apps | Containers com autoscale (KEDA), incluindo scale-to-zero. PaaS serverless para containers/microserviços |
+
+**d) Eventos e Mensagens**
+
+| Serviço | Descrição |
+|---------|-----------|
+| Azure Event Grid | Roteamento de eventos (pub/sub) totalmente gerenciado e serverless |
+| Azure Service Bus | Fila/tópico gerenciado — paga por operação/unidade, sem se preocupar com servidores |
+| Azure Queue Storage | Modelo simples de fila, também gerenciado |
+
+**e) Dados Serverless**
+
+| Serviço | Descrição |
+|---------|-----------|
+| Azure Cosmos DB (serverless mode) | Em vez de provisionar RU/s fixos, paga por operação |
+| Azure SQL Database serverless | Escala automática com pausa automática quando inativo |
+| Azure Synapse serverless (SQL on-demand) | Consultas ad-hoc sem provisionar recursos |
+
+---
+
+### Resumão: Exemplos por Modelo
+
+```
+IaaS
+  • Azure Virtual Machines
+  • Azure Virtual Machine Scale Sets
+  • Azure Managed Disks
+  • Azure Virtual Network
+  • Azure Load Balancer
+  • Azure VPN Gateway
+
+PaaS
+  • Azure App Service
+  • Azure SQL Database
+  • Azure Cosmos DB (provisionado)
+  • Azure Synapse Analytics
+  • Azure Service Bus
+  • Azure Event Hubs
+  • Azure Kubernetes Service (AKS)
+  • Azure API Management
+  • Azure Key Vault
+
+SaaS
+  • Microsoft 365 (Exchange, SharePoint, Teams, OneDrive)
+  • Dynamics 365
+  • Power BI Service
+  • Azure DevOps Services
+  • GitHub (como serviço gerenciado)
+
+Serverless (modelo de execução)
+  • Azure Functions
+  • Azure Logic Apps
+  • Azure Container Instances
+  • Azure Container Apps
+  • Azure Event Grid
+  • Cosmos DB (serverless mode)
+  • Synapse SQL serverless
+```
+
+---
+
+## 14. Hierarquia de Governança e Custos
+
+### 1️⃣ Hierarquia de Governança
+
+> Ordem do mais alto nível para o mais baixo:
+
+```
+Tenant (Microsoft Entra ID)
+  ↓
+Management Groups (Grupos de gerenciamento)  ✅ PODEM ser nested
+  ↓
+Subscriptions (Assinaturas)                  ❌ NÃO podem ser nested
+  ↓
+Resource Groups                               ❌ NÃO podem ser nested
+  ↓
+Resources (VM, Storage, SQL, etc.)           ❌ NÃO podem ser nested
+```
+
+#### Management Group (Grupo de Gerenciamento)
+
+- Agrupa várias subscriptions
+- **Pode ser nested ✅** (árvore de MGs):
+
+```
+MG-Root
+  ├─ MG-Prod
+  │    ├─ Sub-Prod-A
+  │    └─ Sub-Prod-B
+  └─ MG-Dev
+       └─ Sub-Dev-A
+```
+
+**Usos principais:**
+- Aplicar Azure Policy em larga escala (governança técnica)
+- Aplicar RBAC de alto nível (permissões por unidade de negócio)
+
+#### Subscription (Assinatura)
+
+- Unidade de cobrança (billing) e limites (quotas)
+- Contém vários Resource Groups
+- **Pode ser nested? ❌ NÃO**
+- Você organiza subscriptions usando Management Groups, não uma dentro da outra
+
+#### Resource Group
+
+- Contêiner lógico para recursos com mesmo ciclo de vida
+- **Pode ser nested? ❌ NÃO**
+- Um RG não contém outro RG, apenas recursos
+
+#### Resources
+
+- Os objetos reais: VMs, Storage, DBs, VNets, etc.
+- Sempre pertencem a um Resource Group
+- **Pode ser nested? ❌ NÃO**
+
+---
+
+### 2️⃣ Governança ↔ Custos
+
+> Governança bem feita ajuda a organizar custos, evitar gastos indevidos e atribuir custos corretamente.
+
+**Exemplos práticos:**
+
+- **Separar subscriptions por ambiente:**
+  - Sub-Prod / Sub-Dev / Sub-Test → cada uma com billing, budgets e alertas próprios
+
+- **Management Groups para unidades de negócio:**
+  - MG-Financeiro → Sub-Fin-Prod, Sub-Fin-Dev
+  - MG-Marketing → Sub-Mkt-Prod, Sub-Mkt-Dev
+  - → Permite ver custo por área no Cost Management
+
+- **Tags:**
+  ```
+  environment = prod/dev
+  department  = Financeiro/Marketing
+  project     = LojaOnline/CoreBanking
+  ```
+  → Filtra custo por Tag e vê quem está gastando quanto
+
+- **Azure Policy:**
+  - Bloquear tipos de VMs muito caros
+  - Obrigar Tag `costCenter` em todo recurso
+
+---
+
+### 3️⃣ Microsoft Purview
+
+> Plataforma de **governança de dados** (não de infra).
+
+**Principais funções:**
+- Catalogar fontes de dados (Azure SQL, Storage, Power BI, on-premises, etc.)
+- Classificar dados (PII, dados sensíveis, conformidade LGPD/GDPR)
+- Ver onde estão dados sensíveis
+- Rastrear linhagem de dados (de onde vem, por onde passa, onde vai)
+
+> 💡 **Dica AZ-900:** Se a pergunta falar em **catalogar dados**, **descobrir dados sensíveis** ou **governança de dados corporativos** → resposta tende a ser **Microsoft Purview**.
+
+---
+
+### 4️⃣ Azure Policy
+
+> Ferramenta para criar e aplicar políticas de configuração e conformidade em recursos Azure.
+
+| Efeito | O que faz | Exemplo |
+|--------|-----------|---------|
+| **Deny** | Bloqueia criação se não seguir a política | Negar VMs fora de Brazil South |
+| **Audit** | Marca como "não conforme" sem bloquear | Marcar recursos sem tag costCenter |
+| **Append** | Adiciona config automaticamente | Adicionar tag owner com valor padrão |
+| **DeployIfNotExists** | Se não existir, implanta algo | Garantir que Log Analytics esteja ligado para VMs |
+
+**Onde aplica (escopo):**
+- Management Group
+- Subscription
+- Resource Group
+- Recurso
+
+**Relacionado a custos:**
+- Impedir criação de SKUs caros
+- Impedir recursos em regiões mais caras
+- Exigir tags de custo
+- Manter padrão de governança que impacta diretamente o gasto
+
+---
+
+### 5️⃣ Resource Lock e Tags
+
+#### Resource Lock (Bloqueio)
+
+> Impede deleção ou alteração acidental de um recurso/RG/Subscription.
+
+| Tipo | O que impede |
+|------|-------------|
+| **CanNotDelete** | Não pode deletar, mas pode modificar |
+| **ReadOnly** | Não pode deletar nem modificar (apenas leitura) |
+
+**Quando usar:**
+- Resource Group de produção
+- Banco de dados crítico
+- Componentes de rede base
+
+#### Tags
+
+> Metadados em forma de chave-valor anexados a recursos, RGs ou Subscriptions.
+
+**Exemplos:**
+```
+environment = production
+department  = financeiro
+project     = ecommerce
+costCenter  = CC123
+owner       = joao.silva
+```
+
+**Para que servem:**
+- Organização
+- Governança (Policy pode exigir Tags)
+- Cost Management: filtrar custo por Tag (quem gasta quanto)
+- Scripts/automação baseados em Tags
+
+> ⚠️ **Tags não fazem nada sozinhas:**
+> - ❌ Não desligam VM
+> - ❌ Não aplicam desconto
+> - ❌ Não movem recurso de tier
+>
+> Elas ajudam a **identificar e agrupar** para você tomar ações (manuais ou automatizadas via script).
+
+---
+
+### 6️⃣ Azure Advisor
+
+> "Consultor" automático de boas práticas no Azure.
+
+**Dá recomendações em 5 áreas:**
+
+| Área | Exemplo de recomendação |
+|------|------------------------|
+| **Custo** | VMs superdimensionadas, usar reservas |
+| **Performance** | App com pouco CPU disponível |
+| **Alta Disponibilidade** | VMs fora de Availability Set/Zone |
+| **Segurança** | Integrado com Defender for Cloud |
+| **Operational Excellence** | Práticas operacionais |
+
+**Como ajuda em custo:**
+- Aponta recursos subutilizados (VM muito grande, banco com DTUs/RU/s sobrando)
+- Sugere otimizações: downgrade de SKU, Reserved Instances, desligar recursos sem uso
+
+> 💡 **Dica AZ-900:** "Recomendações para otimização de custo, performance, disponibilidade" → **Azure Advisor**
+
+---
+
+### 7️⃣ Resource Health
+
+> Mostra o estado de saúde de **recursos específicos** (VM, App Service, DB, etc.).
+
+**Status típicos:**
+
+| Status | Significado |
+|--------|-------------|
+| Healthy | Recurso funcionando normalmente |
+| Degraded | Recurso com degradação de performance |
+| Unavailable | Recurso indisponível |
+| Unknown | Estado não determinado |
+
+**Para que serve:**
+- Ver se o problema é seu (configuração, app) ou da plataforma Azure (incidente/datacenter)
+- Ver histórico de incidentes por recurso
+
+**Diferença importante:**
+
+| Serviço | Escopo |
+|---------|--------|
+| **Azure Status** | Saúde de serviços/regiões (global, público) |
+| **Resource Health** | Saúde dos **seus** recursos específicos |
+
+---
+
+### 8️⃣ Azure Monitor
+
+> Plataforma unificada de monitoramento e telemetria no Azure.
+
+**Principais componentes:**
+
+| Componente | O que faz |
+|-----------|-----------|
+| **Metrics** | Números em série temporal (CPU, RAM, IOPS, requests/s) |
+| **Logs** | Eventos detalhados (diagnóstico, app logs, auditoria) |
+| **Alerts** | Regras disparadas com base em métricas/logs (e-mail, webhook, SMS) |
+| **Application Insights** | Telemetria de aplicação (tempo de resposta, falhas, dependências) |
+| **Log Analytics Workspace** | "Balde" central onde logs são armazenados e consultados via KQL |
+
+**Relação com Governança e Custos:**
+```
+Sem monitoramento:
+  ❌ Não vê gargalos → pode superprovisionar → custo maior
+  ❌ Não detecta ociosidade → recurso parado consumindo grana
+
+Com Azure Monitor:
+  ✅ Detecta uso anormal (custo inesperado)
+  ✅ Gera alertas para agir antes da conta estourar
+  ✅ Ajuda a tomar decisão de resizing ou desligar recursos
+```
+
+---
+
+### Resumão Rápido — Governança e Custos
+
+```
+Hierarquia:
+  Tenant → Management Group (nested ✅) → Subscription → Resource Group → Resource
+
+Custos:
+  Controlados por: Subscriptions, Tags, Policy, Advisor, Monitor
+
+Microsoft Purview:
+  Governança de dados (catálogo, classificação, linhagem)
+
+Azure Policy:
+  Regras para manter conformidade de recursos (bloquear/monitorar/configurar)
+
+Resource Lock:
+  Protege contra delete/alteração acidental
+
+Tags:
+  Chave-valor para organizar e atribuir custos (não automatizam nada sozinhas)
+
+Azure Advisor:
+  Recomendações de custo, performance, HA, segurança
+
+Resource Health:
+  Saúde de recursos individuais (se impacto é Azure ou seu)
+
+Azure Monitor:
+  Métricas + Logs + Alertas + Application Insights + Log Analytics
+```
+
+---
+
+## 15. Pegadinhas Comuns
 
 ```
 1. App Service ≠ Serverless
@@ -538,6 +999,23 @@ Condições válidas em Conditional Access:
 
 15. Tags categorizam recursos (não automatizam ações)
     Tags não desligam VMs, não aplicam descontos
+
+16. IaaS = você gerencia SO para cima
+    PaaS = você gerencia apenas código e dados
+    SaaS = você apenas consome a aplicação
+
+17. Microsoft Purview = governança de DADOS (não de infra)
+    Azure Policy = governança de RECURSOS (infra e configuração)
+
+18. Resource Lock CanNotDelete ≠ ReadOnly
+    CanNotDelete = pode modificar, não pode deletar
+    ReadOnly = não pode modificar nem deletar
+
+19. Azure Advisor = recomendações (não aplica automaticamente)
+    Você precisa agir sobre as recomendações manualmente
+
+20. Resource Health = saúde dos SEUS recursos
+    Azure Status = saúde da plataforma Azure (global)
 ```
 
 ---
@@ -573,6 +1051,14 @@ Condições válidas em Conditional Access:
 - [ ] Azure Firewall = NAT + Network + Application + FQDN
 - [ ] B2B = parceiros; B2C = consumidores
 - [ ] Defender for Cloud ≠ password management
+- [ ] IaaS / PaaS / SaaS = divisão de responsabilidade (você vs Azure)
+- [ ] Serverless = event-driven, scale-to-zero, paga por execução
+- [ ] Microsoft Purview = governança de dados (catálogo, classificação, linhagem)
+- [ ] Azure Policy = conformidade de recursos (Deny, Audit, Append, DeployIfNotExists)
+- [ ] Resource Lock = protege contra deleção/modificação acidental
+- [ ] Azure Advisor = recomendações de custo, performance, HA, segurança
+- [ ] Resource Health = saúde dos meus recursos (vs Azure Status = global)
+- [ ] Azure Monitor = Metrics + Logs + Alerts + App Insights + Log Analytics
 
 ---
 
